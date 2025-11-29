@@ -4,33 +4,43 @@ use misc::checkwin;
 use crossterm::style::Stylize;
 use crossterm::execute;
 use misc::{clear, waituntil, printgrid};
-use crossterm::cursor::{Hide, Show};
-use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen};
+use crossterm::cursor::{Hide, Show, MoveTo};
+use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen, Clear};
 
 use crate::misc::selectgrid;
 fn main() {
     execute!(std::io::stdout(), EnterAlternateScreen, Hide).unwrap();
-    let mut grid = vec![String::from(" "); 42];
-    let mut token = "X".red();
+    let mut quit = false;
     loop {
-        let (col, row) = selectgrid(&grid, token);
-        grid[(col + row * 7) as usize] = token.to_string();
-        if checkwin(&grid, token) {
-            clear();
-            printgrid(&grid);
-            println!("\n{} won!\nPress any key to continue...", token);
-            waituntil();
+        let mut grid = vec![String::from(" "); 42];
+        let mut token = "X".red();
+        loop {
+            let (col, row) = selectgrid(&grid, token);
+            if col == -1 && row == -1 {
+                quit = true;
+                break;
+            }
+            grid[(col + row * 7) as usize] = token.to_string();
+            if checkwin(&grid, token) {
+                clear();
+                printgrid(&grid);
+                println!("\n{} won!\nPress any key to restart...", token);
+                waituntil();
+                break;
+            }
+            if col == -2 && row == -2 {
+                clear();
+                printgrid(&grid);
+                println!("\nIt's a draw!\nPress any key to restart...");
+                waituntil();
+                break;
+            }
+            token = switchtoken(token);
         }
-        if col == -2 && row == -2 {
-            clear();
-            printgrid(&grid);
-            println!("\nIt's a draw!\nPress any key to continue...");
-            waituntil();
-        }
-        if col == -1 && row == -1 {
+        if quit == true {
             break;
         }
-        token = switchtoken(token);
+        execute!(std::io::stdout(), Clear(crossterm::terminal::ClearType::All), MoveTo(0, 0)).unwrap();
     }
     execute!(std::io::stdout(), LeaveAlternateScreen, Show).unwrap();
 

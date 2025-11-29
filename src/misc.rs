@@ -1,4 +1,4 @@
-use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind, poll};
 use crossterm::style::{StyledContent, Stylize};
 use crossterm::cursor::MoveTo;
 use std::{time::Duration, thread::sleep};
@@ -17,6 +17,9 @@ fn checkdraw(grid: &Vec<String>) -> bool {
 
 pub fn waituntil() {
     enable_raw_mode().unwrap();
+    while poll(Duration::from_millis(0)).unwrap() {
+        let _ = event::read();
+    }
     loop {
         if let Event::Key(_) = event::read().unwrap() {
             break;
@@ -65,7 +68,7 @@ pub fn checkwin(grid: &Vec<String>, token: StyledContent<&str>) -> bool {
 }
 
 pub fn clear() {
-    execute!(std::io::stdout(), crossterm::terminal::Clear(ClearType::Purge), MoveTo(0, 0)).unwrap();
+    execute!(std::io::stdout(), MoveTo(0, 0), crossterm::terminal::Clear(ClearType::Purge)).unwrap();
 }
 
 fn checkavailable(grid: &Vec<String>, col: i16) -> bool {

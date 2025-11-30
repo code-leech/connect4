@@ -17,7 +17,7 @@ fn checkdraw(grid: &Vec<String>) -> bool {
 
 pub fn waituntil() {
     enable_raw_mode().unwrap();
-    while poll(Duration::from_millis(0)).unwrap() {
+    while poll(Duration::from_millis(75)).unwrap() {
         let _ = event::read();
     }
     loop {

@@ -17,7 +17,9 @@ fn checkdraw(grid: &Vec<String>) -> bool {
 
 pub fn waituntil() {
     enable_raw_mode().unwrap();
-    while poll(Duration::from_millis(75)).unwrap() {
+    sleep(Duration::from_millis(500));
+    println!("Press any key to continue...");
+    while poll(Duration::from_millis(0)).unwrap() {
         let _ = event::read();
     }
     loop {
@@ -138,6 +140,9 @@ pub fn selectgrid(grid: &Vec<String>, token: StyledContent<&str>) -> (i16, i16){
         col += 1;
     }
     enable_raw_mode().unwrap();
+    while poll(Duration::from_millis(0)).unwrap() {
+        let _ = event::read();
+    }
     loop {
         clear();
         tempgrid = grid.clone();

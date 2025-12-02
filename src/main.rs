@@ -24,14 +24,14 @@ fn main() {
             if checkwin(&grid, token) {
                 clear();
                 printgrid(&grid);
-                println!("\n{} won!\nPress any key to restart...", token);
+                println!("\n{} won!", token);
                 waituntil();
                 break;
             }
             if col == -2 && row == -2 {
                 clear();
                 printgrid(&grid);
-                println!("\nIt's a draw!\nPress any key to restart...");
+                println!("\nIt's a draw!");
                 waituntil();
                 break;
             }
